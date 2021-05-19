@@ -95,8 +95,8 @@ doc.setFont(tR, 12)
 doc.drawString(40,610, name)
 doc.drawString(200,610, data["firstName"])
 if data["middleName"] != None:
-    doc.drawString(250,610,data["middleName"])
-doc.drawString(300,610, data["lastName"])
+    doc.drawString(280,610,data["middleName"])
+doc.drawString(340,610, data["lastName"])
 
 #Amount paid and Pan card No
 doc.setFont(tR, 12)
