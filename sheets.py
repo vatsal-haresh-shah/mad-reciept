@@ -10,13 +10,12 @@ serviceAccountFile = 'generator-keys.json'
 def sheetData(scope, serviceAccountFile):
     from googleapiclient.discovery import build
     from google.oauth2 import service_account
+    from num2words import num2words
     creds = None
     creds = service_account.Credentials.from_service_account_file(serviceAccountFile, scopes=scope)
 
     # The ID and range of a sample spreadsheet.
     SPREADSHEET_ID = '1lpiY659Dc0at_Z6rfr1pAJXzMKrxaoU1nUCqSAnZMKU'
-
-
 
     service = build('sheets', 'v4', credentials=creds)
 
@@ -34,8 +33,9 @@ def sheetData(scope, serviceAccountFile):
             "middleName": row[2],
             "lastName" : row[3],
             "amountPaid" : row[13],
-            "panCardNo" : row[13],
-            "bankName" : row[14]
+            "panCardNo" : row[15],
+            "bankName" : row[14],
+            "amtWord" : num2words(row[13])
         }
     
     return data
@@ -72,7 +72,7 @@ def createReciept(data):
 
 
     #Defining Canvas object and Initializing PDF with pdfName
-    doc = canvas.Canvas(fileName, pagesize=A4)
+    doc = canvas.Canvas("MAD-Reciept " + data["firstName"] + " " + data["lastName"] + ".pdf", pagesize=A4)
     
     #Give the document a title
     doc.setTitle(docTitle)
@@ -113,17 +113,17 @@ def createReciept(data):
     doc.drawString(480,640,currentDate)
     
     #Name of the Donor
-    doc.setFont(tR, 12)
     doc.drawString(40,610, name)
+    doc.setFont(tR, 18)
     doc.drawString(200,610, data["firstName"])
     if data["middleName"] != None:
         doc.drawString(280,610,data["middleName"])
-    doc.drawString(340,610, data["lastName"])
+    doc.drawString(360,610, data["lastName"])
     
     #Amount paid and Pan card No
     doc.setFont(tR, 12)
     doc.drawString(40,580, amount)
-    doc.drawString(100, 580, data["amountPaid"])
+    doc.drawString(100, 580, data["amountPaid"] + "/-")
     
     doc.drawString(200,580, panCard)
     doc.drawString(300,580, data["panCardNo"])
@@ -131,22 +131,25 @@ def createReciept(data):
     #Amount Paid in words
     doc.setFont(tR, 12)
     doc.drawString(40,550, amountWord)
+    doc.drawString(150,550, data["amtWord"])
     
+    '''
     #Payment Mode, Date of Payment and Bank
     doc.setFont(tR, 12)
     doc.drawString(40,520, payMode)
-    #doc.drawString(120,520, data["paymentMode"])
+    doc.drawString(120,520, data["paymentMode"])
+    '''
+
+    doc.drawString(40,520, date)
+    doc.drawString(70,520, data["date"])
     
-    doc.drawString(200,520, date)
-    doc.drawString(250,520, data["date"])
-    
-    doc.drawString(350,520, bank)
-    doc.drawString(410,520, data["bankName"])
+    doc.drawString(250,520, bank)
+    doc.drawString(300,520, data["bankName"])
     
     #Amount Box
     doc.rect(60,460,60,30)
     doc.setFont(tR, 16)
-    doc.drawString(70, 470, data["amountPaid"])
+    doc.drawString(70, 470, data["amountPaid"] + "/-")
     
     #Apprecition text
     doc.setFont("Courier", 18)

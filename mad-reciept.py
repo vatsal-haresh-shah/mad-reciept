@@ -50,7 +50,7 @@ data = {"srNo" : "1524",
         "paymentMode" : "Cheque"}
 
 #Defining Canvas object and Initializing PDF with pdfName
-doc = canvas.Canvas(fileName, pagesize=A4)
+doc = canvas.Canvas("Reciept " + data["firstName"] + " " + data["lastName"] + ".pdf", pagesize=A4)
 
 #Give the document a title
 doc.setTitle(docTitle)
